@@ -41,20 +41,30 @@ attachInterrupt(digitalPinToInterrupt(ECHO_RIGHT), InterruptRight, CHANGE);
 ````
 
 ````C++
-void switchOnTrigger() {
+void SetImage() {
 	if (micros() - startTime >= TIME_MEASURE) {
 		// Condition sur la distance la plus courte droite ou gauche avec un objet.
-		if (LastPulseTimeLeft > MAX_DISTANCE && LastPulseTimeRight > MAX_DISTANCE)
+		if (lastPulseTimeLeft > MAX_DISTANCE && lastPulseTimeRight > MAX_DISTANCE)
 		{
-			Image = eye_forward;
+			imageState = FORWARD_STATE;
+			currentImage = eyeForward;
 		}
-		else if (LastPulseTimeLeft > LastPulseTimeRight)
+		else if (lastPulseTimeLeft > lastPulseTimeRight)
 		{
-			Image = eye_right;
+			currentImage = eyeRight;
+			if (imageState != RIGHT_STATE) {
+				currentImage = eyeForward;
+				imageState = RIGHT_STATE;
+			}
 		}
-		else if (LastPulseTimeLeft < LastPulseTimeRight)
+		else if (lastPulseTimeLeft < lastPulseTimeRight)
 		{
-			Image = eye_left;
+			currentImage = eyeLeft;
+			if (imageState != LEFT_STATE)
+			{
+				currentImage = eyeForward;
+				imageState = LEFT_STATE;
+			}
 		}
 
 		// Emet l'ultrason
@@ -63,7 +73,7 @@ void switchOnTrigger() {
 		digitalWrite(TRIGGER, LOW);
 
 		// Reset
-		LastPulseTimeLeft = LastPulseTimeRight = 0;
+		lastPulseTimeLeft = lastPulseTimeRight = 0;
 	}
 }
 ````
@@ -73,23 +83,22 @@ void loop() {
 	// Condition pour cligner des yeux
 	if (startTimerBlink + TIME_BLINK < micros())
 	{
-		Image = eye_blink;
+		currentImage = eyeBlink;
 		startTimerBlink = micros();
-		Blink = true;
+		blinked = true;
 	}
 
-	// Afficher l'image en cours
-	aff(Image, 200);
+	showImage(currentImage, 200);
 
-	// Si on a cligné des yeux -> On les rouvre devant
-	if (Blink)
+	// Si on a fermé les yeux -> On les rouvre pour cligner
+	if (blinked)
 	{
-		Image = eye_forward;
-		Blink = false;
+		currentImage = eyeForward;
+		blinked = false;
 	}
 
-	// On appelle pour savoir quelle est l'image à afficher
-	switchOnTrigger();
+	// On appelle pour savoir quelle image afficher
+	SetImage();
 }
 ````
 
