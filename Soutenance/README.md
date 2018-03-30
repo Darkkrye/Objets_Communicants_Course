@@ -19,12 +19,10 @@ Les outils utilisés ont été les suivants :
 # Fritzing
 Voici le document Fritzing du projet, référençant tous les branchements nécessaires pour faire fonctionner les yeux :
 
-`TODO : Importer une image du Fritzing et l'afficher dans le README`
+![alt text](ObjetsCommunicantsFritzing.png)
 
 # Présentation
 La soutenance finale s'est déroulée autour d'une présentation et d'une démonstration. La présentation est disponible au format PDF dans ce dossier.
-
-`TODO : Importer le PDF de la présentation.`
 
 # Code
 Le code à envoyer sur la carte Arduino est disponible dans ce même dossier et à été développé en C++.
